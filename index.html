@@ -1,0 +1,562 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>오늘 뭐 먹지? | 학식 투표</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: "Pretendard", "맑은 고딕", sans-serif;
+    background: #eff6ff;
+    color: #1e293b;
+}
+
+header {
+    background: linear-gradient(135deg, #1e40af, #3b82f6);
+    color: white;
+    text-align: center;
+    padding: 48px 20px 55px;
+}
+
+header h1 {
+    font-size: 36px;
+    margin: 12px 0;
+}
+
+header p {
+    color: #dbeafe;
+    line-height: 1.6;
+}
+
+#date {
+    font-size: 14px;
+    letter-spacing: 1px;
+}
+
+main {
+    max-width: 760px;
+    margin: -24px auto 40px;
+    padding: 0 16px;
+}
+
+section {
+    background: white;
+    border-radius: 20px;
+    padding: 28px;
+    margin-bottom: 20px;
+    box-shadow: 0 5px 24px rgba(30, 64, 175, 0.08);
+}
+
+h2 {
+    margin: 0 0 8px;
+    font-size: 23px;
+}
+
+.description {
+    color: #64748b;
+    font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 24px;
+}
+
+.menu-list {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+}
+
+.menu-card {
+    position: relative;
+    display: block;
+    cursor: pointer;
+}
+
+.menu-card input {
+    position: absolute;
+    opacity: 0;
+}
+
+.menu-content {
+    border: 2px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 24px 10px;
+    text-align: center;
+    transition: 0.2s;
+    height: 100%;
+}
+
+.menu-content:hover {
+    border-color: #60a5fa;
+    background: #f8fbff;
+}
+
+.menu-card input:checked + .menu-content {
+    background: #dbeafe;
+    border-color: #2563eb;
+    color: #1d4ed8;
+}
+
+.menu-card input:focus-visible + .menu-content {
+    outline: 3px solid #93c5fd;
+}
+
+.emoji {
+    display: block;
+    font-size: 48px;
+    margin-bottom: 16px;
+}
+
+.menu-name {
+    font-size: 19px;
+    font-weight: bold;
+}
+
+.menu-type {
+    display: block;
+    font-size: 13px;
+    color: #64748b;
+    margin-top: 8px;
+}
+
+button {
+    font-family: inherit;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+#voteButton {
+    width: 100%;
+    border: none;
+    background: #2563eb;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    border-radius: 12px;
+    padding: 17px;
+    margin-top: 22px;
+}
+
+#voteButton:hover {
+    background: #1d4ed8;
+}
+
+#voteButton:disabled {
+    background: #94a3b8;
+    cursor: not-allowed;
+}
+
+#message {
+    text-align: center;
+    color: #2563eb;
+    font-size: 14px;
+    margin: 15px 0 0;
+    min-height: 20px;
+}
+
+.result-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+#totalVotes {
+    background: #eff6ff;
+    color: #1d4ed8;
+    padding: 8px 14px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.result-row {
+    margin: 24px 0;
+}
+
+.result-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+    font-size: 15px;
+}
+
+.result-name {
+    font-weight: bold;
+}
+
+.result-number {
+    color: #475569;
+    font-size: 14px;
+}
+
+.bar-track {
+    background: #eaf0f8;
+    border-radius: 8px;
+    height: 28px;
+    overflow: hidden;
+}
+
+.bar-fill {
+    width: 0%;
+    height: 100%;
+    border-radius: 8px;
+    transition: width 0.6s ease;
+}
+
+.bar-0 {
+    background: #2563eb;
+}
+
+.bar-1 {
+    background: #60a5fa;
+}
+
+.bar-2 {
+    background: #93c5fd;
+}
+
+#winner {
+    background: #eff6ff;
+    border-radius: 12px;
+    padding: 16px;
+    color: #1e40af;
+    text-align: center;
+    font-weight: bold;
+    line-height: 1.6;
+    margin-top: 25px;
+}
+
+#resetButton {
+    display: block;
+    margin: 20px auto 0;
+    border: none;
+    background: transparent;
+    color: #64748b;
+    font-size: 13px;
+    text-decoration: underline;
+    padding: 10px;
+}
+
+footer {
+    text-align: center;
+    color: #94a3b8;
+    font-size: 12px;
+    padding: 0 16px 30px;
+    line-height: 1.8;
+}
+
+@media (max-width: 540px) {
+    header h1 {
+        font-size: 29px;
+    }
+
+    section {
+        padding: 22px 18px;
+    }
+
+    .menu-list {
+        grid-template-columns: 1fr;
+    }
+
+    .menu-content {
+        display: flex;
+        align-items: center;
+        text-align: left;
+        padding: 18px;
+        gap: 18px;
+    }
+
+    .emoji {
+        font-size: 38px;
+        margin: 0;
+    }
+
+    .menu-name {
+        font-size: 18px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    * {
+        transition: none !important;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <div id="date"></div>
+    <h1>🍽️ 오늘 뭐 먹지?</h1>
+    <p>오늘의 학식, 당신의 선택은?<br>
+    가장 먹고 싶은 메뉴에 투표해 주세요.</p>
+</header>
+
+<main>
+    <section>
+        <h2>오늘의 메뉴</h2>
+        <p class="description">
+            가장 먹고 싶은 메뉴 하나를 선택해 주세요.
+        </p>
+
+        <div class="menu-list" id="menuList"></div>
+
+        <button id="voteButton" disabled>
+            투표하기
+        </button>
+
+        <p id="message" role="status"></p>
+    </section>
+
+    <section>
+        <div class="result-header">
+            <h2>📊 실시간 투표 결과</h2>
+            <span id="totalVotes">총 0표</span>
+        </div>
+
+        <p class="description">
+            어떤 메뉴가 가장 인기 있을까요?
+        </p>
+
+        <div id="results"></div>
+        <div id="winner" role="status"></div>
+
+        <button id="resetButton">투표 초기화</button>
+    </section>
+</main>
+
+<footer>
+    TODAY'S CAFETERIA<br>
+    오늘의 맛있는 선택, 학식 투표
+</footer>
+
+<script>
+// 메뉴 설정
+const menus = [
+    { name: "닭볶음탕", emoji: "🍗", type: "일반 학식" },
+    { name: "뚝배기오리", emoji: "🍲", type: "뚝배기" },
+    { name: "통살치킨덮밥", emoji: "🍛", type: "덮밥" }
+];
+
+// 날짜별 저장 키 생성
+const today = new Date();
+
+const dateKey = [
+    today.getFullYear(),
+    today.getMonth() + 1,
+    today.getDate()
+].join("-");
+
+const storageKey = "cafeteria-vote-" + dateKey;
+
+document.getElementById("date").textContent =
+    today.toLocaleDateString("ko-KR", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        weekday: "long"
+    });
+
+// 투표 데이터 불러오기
+let data = {
+    votes: [0, 0, 0],
+    selected: null
+};
+
+try {
+    const saved = JSON.parse(localStorage.getItem(storageKey));
+
+    if (
+        saved &&
+        Array.isArray(saved.votes) &&
+        saved.votes.length === menus.length &&
+        saved.votes.every(v => Number.isInteger(v) && v >= 0) &&
+        (saved.selected === null ||
+        (Number.isInteger(saved.selected) &&
+         saved.selected >= 0 &&
+         saved.selected < menus.length))
+    ) {
+        data = saved;
+    }
+} catch (error) {
+    console.warn("저장된 데이터를 불러올 수 없습니다.");
+}
+
+let selected = data.selected;
+
+const menuList = document.getElementById("menuList");
+const voteButton = document.getElementById("voteButton");
+const message = document.getElementById("message");
+
+// 메뉴 카드 생성
+menus.forEach((menu, index) => {
+    menuList.innerHTML += `
+        <label class="menu-card">
+            <input type="radio" name="menu" value="${index}">
+            <div class="menu-content">
+                <span class="emoji">${menu.emoji}</span>
+                <div>
+                    <span class="menu-name">${menu.name}</span>
+                    <span class="menu-type">${menu.type}</span>
+                </div>
+            </div>
+        </label>
+    `;
+});
+
+const radios = document.querySelectorAll('input[name="menu"]');
+
+// 메뉴 선택
+radios.forEach(radio => {
+    radio.addEventListener("change", () => {
+        selected = Number(radio.value);
+        voteButton.disabled = data.selected !== null;
+    });
+});
+
+// 데이터 저장
+function saveData() {
+    try {
+        localStorage.setItem(storageKey, JSON.stringify(data));
+        return true;
+    } catch (error) {
+        return false;
+    }
+}
+
+// 투표 처리
+voteButton.addEventListener("click", () => {
+    if (selected === null || data.selected !== null) {
+        return;
+    }
+
+    data.votes[selected]++;
+    data.selected = selected;
+
+    const saved = saveData();
+
+    updateResults();
+    updateVotingState();
+
+    if (!saved) {
+        message.textContent =
+            "투표했지만 브라우저에 저장하지 못했어요.";
+    }
+});
+
+// 투표 상태 업데이트
+function updateVotingState() {
+    const voted = data.selected !== null;
+
+    radios.forEach((radio, index) => {
+        radio.disabled = voted;
+        radio.checked = selected === index;
+    });
+
+    voteButton.disabled = voted || selected === null;
+    voteButton.textContent = voted ? "✓ 투표 완료" : "투표하기";
+
+    message.textContent = voted
+        ? menus[data.selected].name + "에 투표했어요!"
+        : "";
+}
+
+// 막대그래프 업데이트
+function updateResults() {
+    const total = data.votes.reduce((sum, vote) => sum + vote, 0);
+    const max = Math.max(...data.votes);
+
+    document.getElementById("totalVotes").textContent =
+        "총 " + total + "표";
+
+    const results = document.getElementById("results");
+    results.innerHTML = "";
+
+    menus.forEach((menu, index) => {
+        const count = data.votes[index];
+        const percent = total === 0 ? 0 : count / total * 100;
+        const isWinner = total > 0 && count === max;
+
+        results.innerHTML += `
+            <div class="result-row">
+                <div class="result-label">
+                    <span class="result-name">
+                        ${menu.emoji} ${menu.name}
+                        ${isWinner ? " 👑" : ""}
+                    </span>
+                    <span class="result-number">
+                        ${count}표 · ${percent.toFixed(1)}%
+                    </span>
+                </div>
+                <div class="bar-track"
+                     role="progressbar"
+                     aria-label="${menu.name} 득표율"
+                     aria-valuemin="0"
+                     aria-valuemax="100"
+                     aria-valuenow="${percent}">
+                    <div class="bar-fill bar-${index}"
+                         data-percent="${percent}">
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+
+    requestAnimationFrame(() => {
+        document.querySelectorAll(".bar-fill").forEach(bar => {
+            bar.style.width = bar.dataset.percent + "%";
+        });
+    });
+
+    const winner = document.getElementById("winner");
+
+    if (total === 0) {
+        winner.textContent = "첫 번째 투표의 주인공이 되어 보세요!";
+    } else {
+        const leaders = menus
+            .filter((menu, index) => data.votes[index] === max)
+            .map(menu => menu.name);
+
+        winner.textContent = leaders.length === 1
+            ? "🏆 현재 인기 1위: " + leaders[0]
+            : "🏆 공동 1위: " + leaders.join(", ");
+    }
+}
+
+// 초기화
+document.getElementById("resetButton")
+    .addEventListener("click", () => {
+        if (!confirm("오늘의 투표 결과를 모두 초기화할까요?")) {
+            return;
+        }
+
+        data = {
+            votes: [0, 0, 0],
+            selected: null
+        };
+
+        selected = null;
+
+        saveData();
+        updateResults();
+        updateVotingState();
+    });
+
+// 최초 화면 표시
+updateResults();
+updateVotingState();
+</script>
+
+</body>
+</html>
